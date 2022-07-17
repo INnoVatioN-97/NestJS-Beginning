@@ -38,9 +38,69 @@ describe('MoviesService', () => {
       expect(movie.id).toEqual(1);
     });
 
-    it('should throw 404 error', () => {
+    it('should throw a NotFoundException', () => {
       try {
         service.getOne(999);
+      } catch (err) {
+        expect(err).toBeInstanceOf(NotFoundException);
+        expect(err.message).toEqual('999에 해당하는 영화를 찾지 못했습니다.');
+      }
+    });
+  });
+
+  describe('deleteOne', () => {
+    it('deletes a movie', () => {
+      service.createMovie({
+        title: 'Test Movie',
+        genres: ['Action', 'gore', 'romance'],
+        year: 2000,
+      });
+      const allMovies = service.getAll();
+      service.deleteOne(1);
+      const afterDelete = service.getAll();
+      expect(afterDelete.length).toEqual(allMovies.length - 1);
+    });
+    it('should throw a NotFoundException', () => {
+      try {
+        service.deleteOne(999);
+      } catch (err) {
+        expect(err).toBeInstanceOf(NotFoundException);
+        expect(err.message).toEqual('999에 해당하는 영화를 찾지 못했습니다.');
+      }
+    });
+  });
+
+  describe('create', () => {
+    it('should create a movie', () => {
+      const beforeCreate = service.getAll().length;
+      service.createMovie({
+        title: 'Test Movie',
+        genres: ['Action', 'gore', 'romance'],
+        year: 2000,
+      });
+
+      const afterCreate = service.getAll().length;
+      expect(afterCreate).toBeGreaterThan(beforeCreate);
+    });
+  });
+
+  describe('update', () => {
+    it('should update a movie', () => {
+      service.createMovie({
+        title: 'Test Movie',
+        genres: ['Action', 'gore', 'romance'],
+        year: 2000,
+      });
+
+      service.update(1, { title: 'updated Test' });
+      const afterMovie = service.getOne(1);
+
+      expect(afterMovie.title).toEqual('updated Test');
+    });
+
+    it('should throw a NotFoundException', () => {
+      try {
+        service.update(999, {});
       } catch (err) {
         expect(err).toBeInstanceOf(NotFoundException);
         expect(err.message).toEqual('999에 해당하는 영화를 찾지 못했습니다.');

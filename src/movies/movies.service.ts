@@ -24,7 +24,7 @@ export class MoviesService {
     // 지우려는 영화가 있는지 먼저 조회. 없으면 Error 발생할것
     this.getOne(id);
 
-    this.movies.filter((movie) => movie.id !== id);
+    this.movies = this.movies.filter((movie) => movie.id !== id);
   }
 
   createMovie(movieData: CreateMovieDto) {
