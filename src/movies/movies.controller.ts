@@ -8,34 +8,33 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { Movie } from './entities/movie.entity';
+import { MoviesService } from './movies.service';
 
 // Spring에서의 @RequestMapping("/movies")와 동일
 @Controller('movies')
 export class MoviesController {
+  constructor(private readonly moviesService: MoviesService) {}
   //index
   @Get()
-  getAll() {
-    return 'This will return all movies';
+  getAll(): Movie[] {
+    return this.moviesService.getAll();
   }
 
-  @Get('search')
-  search(@Query('year') searchingYear: string) {
-    return `We are searching for a movie with a searchingYear ${searchingYear}`;
-  }
   // pathVariable
   @Get(':id')
-  getOne(@Param('id') id: string) {
-    return `This will return one movie. movieId : ${id}`;
+  getOne(@Param('id') id: string): Movie {
+    return this.moviesService.getOne(id);
   }
 
   @Post()
   create(@Body() movieData) {
-    return 'This will create a movie. requestBody: ' + movieData;
+    return this.moviesService.createMovie(movieData);
   }
 
   @Delete(':id')
   deleteMovie(@Param('id') id: string) {
-    return `This will delete a movie. movieId: ${id}`;
+    return this.moviesService.deleteOne(id);
   }
 
   @Patch(':id')
